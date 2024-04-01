@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your PWA</title>
+    <link rel="manifest" href="/manifest.json">
+    <script src="/scripts/main.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('/sw.js').then(function (registration) {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                }, function (err) {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    </script>
+</head>
+<body>
+<h1>Welcome to Your PWA</h1>
+<p>This is a simple PWA example.</p>
+
+<button id="enable-notifications">Enable Notifications</button>
+
+<script>
+    document.getElementById('enable-notifications').addEventListener('click', function () {
+        askNotificationPermission();
+    });
+</script>
+</body>
+</html>

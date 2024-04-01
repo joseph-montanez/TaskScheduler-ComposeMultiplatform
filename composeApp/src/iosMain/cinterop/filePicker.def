@@ -1,0 +1,4 @@
+language = Objective-C
+headers = /Users/josephmontanez/Documents/GitHub/TaskScheduler/iosApp/iosApp/FilePickerBridge.h
+compilerOpts = -framework UIKit -framework Foundation
+linkerOpts = -framework UIKit -framework Foundation

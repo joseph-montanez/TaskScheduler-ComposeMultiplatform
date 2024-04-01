@@ -1,0 +1,24 @@
+CREATE TABLE IF NOT EXISTS task_runs
+(
+    run_id          TEXT PRIMARY KEY, -- Unique identifier for each task run
+    task_id         TEXT NOT NULL, -- References the 'id' in the tasks table
+    run_timestamp   TEXT NOT NULL, -- The datetime the task was run, in ISO8601 format ("YYYY-MM-DD HH:MM:SS.SSS")
+    output          TEXT, -- The output or result of the task run
+    status          TEXT, -- The status of the task run (e.g., "success", "failure")
+    FOREIGN KEY(task_id) REFERENCES tasks(id) -- Establishes the relationship to the tasks table
+);
+
+insert:
+INSERT INTO task_runs(run_id, task_id, run_timestamp, output, status)
+VALUES (:run_id, :task_id, :run_timestamp, :output, :status);
+
+selectByTaskId:
+SELECT *
+FROM task_runs
+WHERE task_id = :task_id
+ORDER BY run_timestamp DESC;
+
+
+deleteByTaskId:
+DELETE FROM task_runs
+WHERE task_id = :task_id;

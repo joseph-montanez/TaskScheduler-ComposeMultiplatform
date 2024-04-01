@@ -1,0 +1,12 @@
+{
+  "appname": "TaskScheduler",
+  "name": "TaskScheduler",
+  "version": "1.0.0",
+  "deb": "/home/joseph/Documents/TaskScheduler/composeApp/build/compose/binaries/main/deb/com.shabb.taskscheduler_1.0.0_amd64.deb",
+  "icons": {
+    "256x256": "icon_256x256.png"
+  },
+  "exec": "/usr/bin/taskscheduler",
+  "categories": "Utility"
+}
+

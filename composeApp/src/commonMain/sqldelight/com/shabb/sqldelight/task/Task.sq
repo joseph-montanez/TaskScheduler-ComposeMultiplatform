@@ -1,0 +1,98 @@
+CREATE TABLE IF NOT EXISTS tasks
+(
+    id              TEXT PRIMARY KEY,
+    title           TEXT NOT NULL,
+    description     TEXT,
+    startDate       TEXT, -- Store dates as ISO8601 strings ("YYYY-MM-DD HH:MM:SS.SSS")
+    endDate         TEXT, -- Store dates as ISO8601 strings ("YYYY-MM-DD HH:MM:SS.SSS")
+    dueDate         TEXT, -- Store dates as ISO8601 strings ("YYYY-MM-DD HH:MM:SS.SSS")
+    priority        INTEGER, -- e.g., 1 for high, 2 for medium, 3 for low
+    status          TEXT, -- e.g., "pending", "in progress", "completed"
+    runType         TEXT, -- e.g., "command", "http"
+    command         TEXT NOT NULL, -- The command or action to be executed
+    entryMode       INTEGER, -- e.g., 0 for preset, 1 for custom, 2 for pro
+    minute          TEXT, -- 0-59 or '*' for every minute
+    hour            TEXT, -- 0-23 or '*' for every hour
+    dayOfMonth      TEXT, -- 1-31 or '*' for every day of the month
+    month           TEXT, -- 1-12 or '*' for every month
+    dayOfWeek       TEXT, -- 0-6 (Sunday to Saturday) or '*' for every day of the week
+    createdAt      TEXT DEFAULT (datetime('now')), -- Automatically store creation time
+    updatedAt      TEXT DEFAULT (datetime('now'))  -- Automatically store creation time
+);
+
+-- Query to insert a new task
+insert:
+INSERT INTO tasks(id, title, description, runType, command, entryMode, startDate, endDate, dueDate, priority, status, minute, hour, dayOfMonth, month, dayOfWeek)
+VALUES (
+    :id,
+    :title,
+    :description,
+    :runType,
+    :command,
+    :entryMode,
+    :startDate,
+    :endDate,
+    :dueDate,
+    :priority,
+    :status,
+    :minute,
+    :hour,
+    :dayOfMonth,
+    :month,
+    :dayOfWeek
+);
+
+update:
+UPDATE tasks
+SET title = :title,
+    description = :description,
+    runType = :runType,
+    command = :command,
+    entryMode = :entryMode,
+    startDate = :startDate,
+    endDate = :endDate,
+    dueDate = :dueDate,
+    priority = :priority,
+    status = :status,
+    minute = :minute,
+    hour = :hour,
+    dayOfMonth = :dayOfMonth,
+    month = :month,
+    dayOfWeek = :dayOfWeek,
+    updatedAt = datetime('now')
+WHERE id = :id;
+
+-- Query to update a task's status
+updateStatus:
+UPDATE tasks
+SET status = ?,
+    updatedAt = datetime('now')
+WHERE id = ?;
+
+updateDueDate:
+UPDATE tasks
+SET dueDate = :dueDate,
+    updatedAt = datetime('now')
+WHERE id = :id;
+
+-- Query to delete a task
+delete:
+DELETE FROM tasks
+WHERE id = ?;
+
+-- Query to get tasks by due date (useful for scheduling)
+selectByDueDate:
+SELECT *
+FROM tasks
+ORDER BY dueDate;
+
+selectById:
+SELECT *
+FROM tasks
+WHERE id = ?;
+
+
+selectTasksToRun:
+SELECT *
+FROM tasks
+WHERE minute = ? AND hour = ? AND (dayOfMonth = ? OR dayOfMonth = '*') AND (month = ? OR month = '*') AND (dayOfWeek = ? OR dayOfWeek = '*');
