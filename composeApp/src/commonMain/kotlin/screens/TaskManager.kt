@@ -181,7 +181,6 @@ fun TaskManagerContent(
                             )
                         }
                         if (maxWidth > 500.dp) {
-                            // Repeat for other texts as needed, depending on desired alignment
                             Box(
                                 modifier = Modifier.weight(row3),
                                 contentAlignment = Alignment.CenterStart
@@ -227,7 +226,6 @@ fun TaskManagerContent(
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .background(Color.Green)
                                     .height(IntrinsicSize.Max)
                                     .padding(vertical = 0.dp)
                                     .clickable { selectedTask = if (selectedTask == task) null else task }
@@ -253,7 +251,7 @@ fun TaskManagerContent(
                                 ) {
                                     Spacer(modifier = Modifier.height((-2).dp))
                                     Text(
-                                        modifier = Modifier.background(Color.Red),
+                                        modifier = Modifier,
                                         text = task.title,
                                         maxLines = 1,
                                     )
