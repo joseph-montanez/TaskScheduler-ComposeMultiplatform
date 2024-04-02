@@ -110,6 +110,8 @@ kotlin {
             implementation("app.cash.sqldelight:sqlite-driver:2.0.1")
 
             implementation("org.springframework.security:spring-security-crypto:6.2.3")
+
+            implementation("com.dorkbox:SystemTray:4.4")
         }
     }
 }
