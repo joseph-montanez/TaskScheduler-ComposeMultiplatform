@@ -39,9 +39,10 @@ kotlin {
             }
         }
     }
-    
+
     sourceSets {
         val desktopMain by getting
+        val commonMain by getting
         val voyagerVersion = "1.0.0"
         
 
@@ -53,7 +54,7 @@ kotlin {
                 implementation("app.cash.sqldelight:sqlite-driver:2.0.1")
             }
         }
-        
+
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
@@ -112,6 +113,7 @@ kotlin {
             implementation("org.springframework.security:spring-security-crypto:6.2.3")
 
             implementation("com.dorkbox:SystemTray:4.4")
+            implementation("com.github.Dansoftowner:jSystemThemeDetector:3.8")
         }
     }
 }

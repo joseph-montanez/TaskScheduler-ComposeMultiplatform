@@ -1,13 +1,9 @@
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import cafe.adriel.voyager.navigator.Navigator
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import screens.TaskManagerScreen
-
 import androidx.compose.runtime.staticCompositionLocalOf
-
 
 val LocalFileChooser = staticCompositionLocalOf<FileChooser?> { null }
 
@@ -24,7 +20,6 @@ private val DarkColorPalette = darkColors(
     onError = Color.White
 )
 
-
 private val LightColorPalette = lightColors(
     primary = Color(0xFF4CAF50),
     primaryVariant = Color(0xFF388E3C),
@@ -37,6 +32,7 @@ private val LightColorPalette = lightColors(
     onSurface = Color.Black,
     onError = Color.Black
 )
+
 
 @Composable
 fun MyAppTheme(
@@ -58,10 +54,22 @@ fun MyAppTheme(
 }
 
 @Composable
-@Preview
 fun App(fileChooser: FileChooser?) {
+    var isDarkTheme by remember { mutableStateOf(isSystemInDarkTheme()) }
+
+    DisposableEffect(Unit) {
+        val themeChangeListener = object : ThemeChangeListener {
+            override fun onThemeChanged(newIsDarkTheme: Boolean) {
+                isDarkTheme = newIsDarkTheme
+            }
+        }
+
+        observeSystemThemeChange(themeChangeListener)
+
+        onDispose { }
+    }
     CompositionLocalProvider(LocalFileChooser provides fileChooser) {
-        MyAppTheme {
+        MyAppTheme(darkTheme = isDarkTheme) {
             Navigator(TaskManagerScreen())
         }
     }
