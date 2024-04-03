@@ -2,6 +2,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import com.shabb.AppearanceManager
 import dorkbox.systemTray.MenuItem
 import dorkbox.systemTray.SystemTray
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -37,12 +38,17 @@ fun integrateSystemTray() {
         println("System tray not supported!")
         return
     }
-
     val dpi = Toolkit.getDefaultToolkit().screenResolution
+    val osName = System.getProperty("os.name").lowercase()
+    val isMacOS = osName.contains("mac")
+
     val iconPath = when {
-        dpi <= 96 -> "icons/icon-24x24.png"
-        dpi <= 120 -> "icons/icon-32x32.png"
-        dpi <= 144 -> "icons/icon-64x64.png"
+        dpi <= 96 && isMacOS -> "icons/icon-24x24-b.png"
+        dpi <= 96 && !isMacOS -> "icons/icon-24x24-w.png"
+        dpi <= 120 && isMacOS -> "icons/icon-32x32-b.png"
+        dpi <= 120 && !isMacOS -> "icons/icon-32x32-w.png"
+        dpi <= 144 && isMacOS -> "icons/icon-64x64-b.png"
+        dpi <= 144 && !isMacOS -> "icons/icon-64x64-w.png"
         else -> "icons/icon-64x64.png"
     }
     val iconURI = URI(getTrayIconImagePath(iconPath))
@@ -51,10 +57,10 @@ fun integrateSystemTray() {
 
     tray.menu.add(MenuItem("Open") {
         showWindow()
-    }).setShortcut('o');
+    }).setShortcut('o')
     tray.menu.add(MenuItem("Close") {
         exitProcess(0)
-    }).setShortcut('q');
+    }).setShortcut('q')
 }
 
 fun showWindow() {
@@ -63,6 +69,17 @@ fun showWindow() {
 
 @OptIn(DelicateCoroutinesApi::class)
 fun main() {
+    val osName = System.getProperty("os.name").lowercase()
+    val isMacOS = osName.contains("mac")
+    if (isMacOS) {
+        System.setProperty("apple.awt.enableTemplateImages", "true");
+        val appearanceManager = AppearanceManager()
+        val callback = com.shabb.AppearanceChangeCallback { newAppearance ->
+            println("Appearance changed to $newAppearance")
+        }
+        appearanceManager.initializeAppearanceObserver(callback)
+    } else {
+    }
     integrateSystemTray()
 
     val database = createDatabase(DriverFactory())

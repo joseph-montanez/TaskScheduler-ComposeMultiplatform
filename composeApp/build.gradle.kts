@@ -153,6 +153,81 @@ dependencies {
     implementation(libs.protolite.well.known.types)
 }
 
+// macOS Specific System Tray
+val compileNativeCode = tasks.register("compileNativeCode") {
+    doLast {
+        val toolchains = project.extensions.getByType(JavaToolchainService::class.java)
+        val toolchain = toolchains.launcherFor {
+            languageVersion.set(JavaLanguageVersion.of(21))
+        }.get().metadata.installationPath.asFile
+        val jdkPath = toolchain.absolutePath
+
+        val srcDir = "src/macOSMain"
+        val outDir = layout.buildDirectory.dir("nativeLibs").get().asFile.absolutePath
+        val libName = "libAppearanceObserver.dylib"
+
+
+        // Create the output directory if it doesn't exist
+        File(outDir).mkdirs()
+
+        val command = listOf("clang", "-fobjc-arc", "-dynamiclib", "-o", "$outDir/$libName",
+                             "$srcDir/AppearanceObserver.m", "$srcDir/AppearanceCallback.m", "-framework", "Cocoa",
+                             "-I$jdkPath/include", "-I$jdkPath/include/darwin")
+        println(command.joinToString(" "))
+
+        // Compile the Objective-C source into a dynamic library
+        exec {
+            commandLine(command)
+            //commandLine("clang", "-fobjc-arc", "-dynamiclib", "-o", "$outDir/$libName", "$srcDir/AppearanceObserver.m", "$srcDir/AppearanceCallback.m", "-framework", "Cocoa")
+        }
+    }
+}
+
+//project("composeApp") {
+//    tasks.named("desktopRun") {
+//        dependsOn(compileNativeCode)
+//    }
+//}
+//
+//tasks.named(":desktopRun") {
+//    dependsOn(compileNativeCode)
+//}
+
+tasks.register("prepareResources") {
+    dependsOn(compileNativeCode)
+    doLast {
+        val resourcesDir = "$projectDir/src/main/resources"
+        val outDir = layout.buildDirectory.dir("nativeLibs").get().asFile.absolutePath
+        val libName = "libAppearanceObserver.dylib"
+        File(resourcesDir).mkdirs()
+        File(outDir).listFiles()?.forEach { file ->
+            if (file.name.equals(libName)) {
+                file.copyTo(File(resourcesDir, file.name), overwrite = true)
+            }
+        }
+    }
+}
+
+tasks.register("generateJniHeaders") {
+    doLast {
+        // Define paths
+        val className = "com.shabb.AppearanceManager"
+
+        val classOutputDir = layout.buildDirectory.dir("classes/kotlin/desktop/main").get().asFile.absolutePath
+        val headerOutputDir = layout.buildDirectory.dir("generated/jniHeaders").get().asFile.absolutePath
+
+        // Ensure the output directory exists
+        File(headerOutputDir).mkdirs()
+
+        // Use `javah` to generate JNI headers, assuming `javah` is available in your environment
+        exec {
+            commandLine("javah", "-d", headerOutputDir, "-classpath", classOutputDir, className)
+        }
+    }
+}
+
+
+
 compose.desktop {
     application {
         mainClass = "MainKt"
@@ -174,4 +249,3 @@ sqldelight {
         }
     }
 }
-
