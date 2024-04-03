@@ -26,8 +26,8 @@ private val DarkColorPalette = darkColors(
 
 
 private val LightColorPalette = lightColors(
-    primary = Color(0xFF00ff76),
-    primaryVariant = Color(0xFF00cb65),
+    primary = Color(0xFF4CAF50),
+    primaryVariant = Color(0xFF388E3C),
     secondary = Color(0xFF6200EE),
     background = Color.White,
     surface = Color.White,
@@ -37,7 +37,6 @@ private val LightColorPalette = lightColors(
     onSurface = Color.Black,
     onError = Color.Black
 )
-
 
 @Composable
 fun MyAppTheme(
