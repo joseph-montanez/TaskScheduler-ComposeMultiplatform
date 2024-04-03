@@ -38,6 +38,13 @@ fun integrateSystemTray() {
         return
     }
 
+    //-- Enable Template Image to have the system tray icon color change based on appearance mode.
+    val osName = System.getProperty("os.name").lowercase()
+    val isMacOS = osName.contains("mac")
+    if (isMacOS) {
+        System.setProperty("apple.awt.enableTemplateImages", "true");
+    }
+
     val dpi = Toolkit.getDefaultToolkit().screenResolution
     val iconPath = when {
         dpi <= 96 -> "icons/icon-24x24.png"
